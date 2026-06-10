@@ -59,7 +59,7 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
             <img src="/assets/logo-cream.png" alt="EXIT Eventos" className="h-8" />
           </motion.div>
           <motion.p
-            className="text-[13px] text-[#FFF9ED]/30 mt-3 tracking-widest uppercase font-light"
+            className="text-[13px] text-[#FFF9ED]/50 mt-3 tracking-widest uppercase font-medium"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -88,7 +88,7 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] text-[#FFF9ED] placeholder:text-[#FFF9ED]/20 rounded-lg focus:outline-none focus:border-[#D0FC03]/40 transition-all text-sm"
+              className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] text-[#FFF9ED] placeholder:text-[#FFF9ED]/40 rounded-lg focus:outline-none focus:border-[#D0FC03]/40 transition-all text-sm"
             />
           </div>
           <div>
@@ -98,7 +98,7 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] text-[#FFF9ED] placeholder:text-[#FFF9ED]/20 rounded-lg focus:outline-none focus:border-[#D0FC03]/40 transition-all text-sm"
+              className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] text-[#FFF9ED] placeholder:text-[#FFF9ED]/40 rounded-lg focus:outline-none focus:border-[#D0FC03]/40 transition-all text-sm"
             />
           </div>
 

@@ -187,13 +187,13 @@ export function Chat() {
       >
         <div className="flex items-center gap-3">
           <img src="/assets/logo-cream.png" alt="EXIT" className="h-6" />
-          <span className="text-[11px] text-[#FFF9ED]/25 uppercase tracking-widest font-light border-l border-[#FFF9ED]/10 pl-3">Central de Eventos</span>
+          <span className="text-[11px] text-[#FFF9ED]/50 uppercase tracking-widest font-medium border-l border-[#FFF9ED]/15 pl-3">Central de Eventos</span>
         </div>
         <motion.button
           onClick={() => window.location.reload()}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="flex items-center gap-1.5 text-xs text-[#FFF9ED]/30 hover:text-[#D0FC03] transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 text-xs text-[#FFF9ED]/50 hover:text-[#D0FC03] transition-colors cursor-pointer font-medium"
         >
           <RotateCcw className="w-3 h-3" />
           Nova conversa
@@ -222,7 +222,7 @@ export function Chat() {
                   O que você quer fazer?
                 </motion.h2>
                 <motion.p
-                  className="text-sm text-[#FFF9ED]/50"
+                  className="text-sm text-[#FFF9ED]/60 font-medium"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
@@ -242,7 +242,7 @@ export function Chat() {
                   <motion.button
                     key={btn.label}
                     onClick={() => handleAction(btn.message)}
-                    className="flex items-center gap-3 px-5 py-4 backdrop-blur-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.05] hover:border-[#D0FC03]/20 rounded-xl text-[#FFF9ED]/70 hover:text-[#D0FC03] transition-all cursor-pointer group"
+                    className="flex items-center gap-3 px-5 py-4 backdrop-blur-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-[#D0FC03]/30 rounded-xl text-[#FFF9ED]/80 hover:text-[#D0FC03] transition-all cursor-pointer group"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + index * 0.1 }}
@@ -252,7 +252,7 @@ export function Chat() {
                     <div className="text-[#FFF9ED]/40 group-hover:text-[#D0FC03] transition-colors">
                       {btn.icon}
                     </div>
-                    <span className="text-sm font-medium">{btn.label}</span>
+                    <span className="text-sm font-semibold">{btn.label}</span>
                   </motion.button>
                 ))}
               </div>
@@ -311,7 +311,7 @@ export function Chat() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
           >
-            <div className="flex items-center gap-2 text-sm text-[#FFF9ED]/40">
+            <div className="flex items-center gap-2 text-sm text-[#FFF9ED]/60 font-medium">
               <div className="w-6 h-6 rounded-full bg-[#D0FC03]/10 flex items-center justify-center">
                 <span className="text-[8px] font-black text-[#D0FC03]">E</span>
               </div>
@@ -343,8 +343,8 @@ export function Chat() {
                 placeholder="Digite uma mensagem..."
                 disabled={isLoading}
                 className={cn(
-                  'w-full px-3 py-2 resize-none bg-transparent border-none text-[#FFF9ED]/90 text-sm',
-                  'focus:outline-none placeholder:text-[#FFF9ED]/30 disabled:opacity-50'
+                  'w-full px-3 py-2 resize-none bg-transparent border-none text-[#FFF9ED] text-sm font-normal',
+                  'focus:outline-none placeholder:text-[#FFF9ED]/40 disabled:opacity-50'
                 )}
                 style={{ overflow: 'hidden' }}
               />
@@ -363,7 +363,7 @@ export function Chat() {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   whileTap={{ scale: 0.94 }}
-                  className="p-2 text-[#FFF9ED]/30 hover:text-[#D0FC03] rounded-lg transition-colors cursor-pointer"
+                  className="p-2 text-[#FFF9ED]/50 hover:text-[#D0FC03] rounded-lg transition-colors cursor-pointer"
                   title="Enviar flyer"
                 >
                   <Paperclip className="w-4 h-4" />
@@ -377,7 +377,7 @@ export function Chat() {
                     }
                   }}
                   whileTap={{ scale: 0.94 }}
-                  className="p-2 text-[#FFF9ED]/30 hover:text-[#D0FC03] rounded-lg transition-colors cursor-pointer"
+                  className="p-2 text-[#FFF9ED]/50 hover:text-[#D0FC03] rounded-lg transition-colors cursor-pointer"
                   title="Ações"
                 >
                   <PlusIcon className="w-4 h-4" />
@@ -393,7 +393,7 @@ export function Chat() {
                   'px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 cursor-pointer',
                   input.trim()
                     ? 'bg-[#D0FC03] text-black shadow-lg shadow-[#D0FC03]/10'
-                    : 'bg-white/[0.03] text-[#FFF9ED]/20'
+                    : 'bg-white/[0.05] text-[#FFF9ED]/35'
                 )}
               >
                 {isLoading ? (
