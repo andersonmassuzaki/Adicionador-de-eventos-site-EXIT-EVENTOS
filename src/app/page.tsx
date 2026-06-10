@@ -79,9 +79,12 @@ export default function Home() {
       >
         <div className="flex items-center gap-3">
           <img src="/assets/logo-cream.png" alt="EXIT" className="h-6" />
-          <span className="text-[11px] text-[#FFF9ED]/50 uppercase tracking-widest font-medium border-l border-[#FFF9ED]/15 pl-3 hidden sm:inline">
-            Central de Eventos
-          </span>
+          <div className="border-l border-[#FFF9ED]/15 pl-3 hidden sm:block">
+            <span className="text-[11px] text-[#FFF9ED]/50 uppercase tracking-widest font-medium block">
+              Central de Eventos
+            </span>
+            <span className="text-[9px] text-[#FFF9ED]/20 font-mono">v0.2.0</span>
+          </div>
         </div>
 
         <TabsNav
