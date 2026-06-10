@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { LogIn, LoaderIcon } from 'lucide-react'
 
 export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
   const [email, setEmail] = useState('')
@@ -34,14 +36,51 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold tracking-tight text-cream">EXIT</h1>
-          <p className="text-sm text-cream/50 mt-1">Central de Eventos</p>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Background effects */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#D0FC03]/5 rounded-full mix-blend-normal filter blur-[128px] animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#D0FC03]/3 rounded-full mix-blend-normal filter blur-[128px] animate-pulse delay-700" />
+      </div>
+
+      <motion.div
+        className="w-full max-w-sm relative z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      >
+        <div className="text-center mb-10">
+          <motion.h1
+            className="text-4xl font-black tracking-tight text-[#FFF9ED]"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            EXIT
+          </motion.h1>
+          <motion.p
+            className="text-sm text-[#FFF9ED]/30 mt-1"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            Central de Eventos
+          </motion.p>
+          <motion.div
+            className="h-px bg-gradient-to-r from-transparent via-[#D0FC03]/20 to-transparent mt-4"
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: '100%', opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <motion.form
+          onSubmit={handleSubmit}
+          className="space-y-4 backdrop-blur-2xl bg-white/[0.02] rounded-2xl border border-white/[0.05] p-6 shadow-2xl"
+          initial={{ scale: 0.98 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.1 }}
+        >
           <div>
             <input
               type="email"
@@ -49,7 +88,7 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 bg-ink-800 border border-ink-700 text-cream placeholder:text-cream/30 rounded-none focus:outline-none focus:border-lime transition-colors"
+              className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] text-[#FFF9ED] placeholder:text-[#FFF9ED]/20 rounded-lg focus:outline-none focus:border-[#D0FC03]/40 transition-all text-sm"
             />
           </div>
           <div>
@@ -59,23 +98,36 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 bg-ink-800 border border-ink-700 text-cream placeholder:text-cream/30 rounded-none focus:outline-none focus:border-lime transition-colors"
+              className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] text-[#FFF9ED] placeholder:text-[#FFF9ED]/20 rounded-lg focus:outline-none focus:border-[#D0FC03]/40 transition-all text-sm"
             />
           </div>
 
           {error && (
-            <p className="text-red text-sm">{error}</p>
+            <motion.p
+              className="text-[#FF4B3E] text-sm text-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              {error}
+            </motion.p>
           )}
 
-          <button
+          <motion.button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-lime text-black font-bold tracking-wide hover:brightness-110 transition-all disabled:opacity-50 rounded-none cursor-pointer"
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full py-3 bg-[#D0FC03] text-black font-bold tracking-wide rounded-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-sm cursor-pointer"
           >
+            {loading ? (
+              <LoaderIcon className="w-4 h-4 animate-spin" />
+            ) : (
+              <LogIn className="w-4 h-4" />
+            )}
             {loading ? 'Entrando...' : 'ENTRAR'}
-          </button>
-        </form>
-      </div>
+          </motion.button>
+        </motion.form>
+      </motion.div>
     </div>
   )
 }
