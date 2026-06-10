@@ -5,4 +5,4 @@ export const openrouter = createOpenAI({
   apiKey: process.env.OPENROUTER_API_KEY!,
 })
 
-export const model = openrouter('anthropic/claude-haiku-4.5')
+export const model = openrouter('google/gemini-2.5-flash')
