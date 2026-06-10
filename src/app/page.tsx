@@ -83,7 +83,7 @@ export default function Home() {
             <span className="text-[11px] text-[#FFF9ED]/50 uppercase tracking-widest font-medium block">
               Central de Eventos
             </span>
-            <span className="text-[9px] text-[#FFF9ED]/20 font-mono">v0.2.0</span>
+            <span className="text-[9px] text-[#FFF9ED]/20 font-mono">v0.2.1</span>
           </div>
         </div>
 
