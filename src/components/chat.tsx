@@ -10,7 +10,6 @@ import {
   Paperclip,
   CalendarPlus,
   Pencil,
-  RotateCcw,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { EventPreview } from './event-preview'
@@ -133,7 +132,7 @@ export function Chat() {
     }
 
     if ((toolType === 'tool-create_event' || toolType === 'tool-update_event') && output) {
-      const success = output.status === 'created' || output.status === 'updated'
+      const success = output.status === 'created' || output.status === 'updated' || output.status === 'pending'
       return (
         <motion.div
           key={i}
@@ -171,37 +170,9 @@ export function Chat() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col w-full items-center relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#D0FC03]/5 rounded-full mix-blend-normal filter blur-[128px] animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#D0FC03]/3 rounded-full mix-blend-normal filter blur-[128px] animate-pulse delay-700" />
-      </div>
-
-      {/* Header */}
-      <motion.header
-        className="w-full max-w-2xl mx-auto flex items-center justify-between px-6 py-4 relative z-10"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <div className="flex items-center gap-3">
-          <img src="/assets/logo-cream.png" alt="EXIT" className="h-6" />
-          <span className="text-[11px] text-[#FFF9ED]/50 uppercase tracking-widest font-medium border-l border-[#FFF9ED]/15 pl-3">Central de Eventos</span>
-        </div>
-        <motion.button
-          onClick={() => window.location.reload()}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex items-center gap-1.5 text-xs text-[#FFF9ED]/50 hover:text-[#D0FC03] transition-colors cursor-pointer font-medium"
-        >
-          <RotateCcw className="w-3 h-3" />
-          Nova conversa
-        </motion.button>
-      </motion.header>
-
+    <div className="flex-1 flex flex-col w-full items-center">
       {/* Messages area */}
-      <div className="flex-1 w-full max-w-2xl mx-auto overflow-y-auto px-6 py-4 relative z-10">
+      <div className="flex-1 w-full max-w-2xl mx-auto overflow-y-auto px-6 py-4">
         {/* Welcome screen */}
         <AnimatePresence>
           {showActions && messages.length === 0 && (

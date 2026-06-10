@@ -3,7 +3,8 @@ import { z } from 'zod'
 import { model } from '@/lib/ai'
 import { SYSTEM_PROMPT } from '@/lib/system-prompt'
 import { isAuthenticated } from '@/lib/auth'
-import { getEvents, addEvent, updateEvent } from '@/lib/github'
+import { getEvents, updateEvent } from '@/lib/github'
+import { createPendingEvent } from '@/lib/supabase'
 
 export const maxDuration = 60
 
@@ -79,7 +80,7 @@ export async function POST(request: Request) {
       },
 
       create_event: {
-        description: 'Cria o evento no site EXIT via GitHub. Só chame APÓS o usuário confirmar o preview.',
+        description: 'Salva o evento para revisão. Só chame APÓS o usuário confirmar o preview. O evento NÃO vai direto pro site — fica aguardando aprovação.',
         parameters: z.object({
           ...eventFields,
           flyerBase64: z.string().optional().describe('Flyer em base64 (sem o prefixo data:image)'),
@@ -87,13 +88,17 @@ export async function POST(request: Request) {
         }),
         execute: async (params: Record<string, unknown>) => {
           const { flyerBase64, flyerExtension, ...eventData } = params
-          const res = await addEvent(eventData, flyerBase64 as string | undefined, flyerExtension as string | undefined)
+          const res = await createPendingEvent(
+            eventData,
+            flyerBase64 as string | undefined,
+            flyerExtension as string | undefined,
+          )
           return {
-            status: res.success ? 'created' : 'error',
+            status: res.success ? 'pending' : 'error',
             message: res.success
-              ? `Evento "${params.name}" criado com sucesso! O site vai atualizar em ~2 minutos.`
+              ? `Evento "${params.name}" salvo para revisão! Vai aparecer na aba Revisão aguardando aprovação.`
               : (res.error ?? 'Erro desconhecido'),
-            commitUrl: res.commitUrl ?? null,
+            eventId: res.id ?? null,
           }
         },
       },
