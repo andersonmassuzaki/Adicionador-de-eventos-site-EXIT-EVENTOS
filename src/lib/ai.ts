@@ -5,4 +5,4 @@ export const openrouter = createOpenAI({
   apiKey: process.env.OPENROUTER_API_KEY!,
 })
 
-export const model = openrouter('google/gemini-2.5-flash')
+export const model = openrouter('openai/gpt-4o-mini')
