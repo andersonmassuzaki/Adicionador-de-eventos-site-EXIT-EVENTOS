@@ -1,4 +1,4 @@
-import { streamText, stepCountIs } from 'ai'
+import { streamText, stepCountIs, convertToModelMessages } from 'ai'
 import { z } from 'zod'
 import { model } from '@/lib/ai'
 import { SYSTEM_PROMPT } from '@/lib/system-prompt'
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
   const result = streamText({
     model,
     system: SYSTEM_PROMPT,
-    messages,
+    messages: await convertToModelMessages(messages),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tools: {
       list_events: {
