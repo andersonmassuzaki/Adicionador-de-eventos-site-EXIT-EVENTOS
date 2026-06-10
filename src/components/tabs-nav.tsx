@@ -30,10 +30,10 @@ export function TabsNav({ activeTab, onTabChange, pendingCount }: TabsNavProps) 
             onClick={() => onTabChange(tab.id)}
             whileTap={{ scale: 0.97 }}
             className={cn(
-              'relative flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer',
+              'relative flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer',
               isActive
-                ? 'bg-white/[0.08] text-[#FFF9ED]'
-                : 'text-[#FFF9ED]/40 hover:text-[#FFF9ED]/70'
+                ? 'text-[#D0FC03]'
+                : 'text-[#FFF9ED]/35 hover:text-[#FFF9ED]/60'
             )}
           >
             <Icon className="w-4 h-4" />

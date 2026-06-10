@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { RotateCcw } from 'lucide-react'
 import { Chat } from '@/components/chat'
@@ -13,6 +13,9 @@ export default function Home() {
   const [authenticated, setAuthenticated] = useState<boolean | null>(null)
   const [activeTab, setActiveTab] = useState<TabId>('chat')
   const [pendingCount, setPendingCount] = useState(0)
+  const [draftSessionId, setDraftSessionId] = useState<string | undefined>()
+  const [draftMessages, setDraftMessages] = useState<{ role: string; content: string }[] | undefined>()
+  const [chatKey, setChatKey] = useState(0) // force re-mount chat
 
   useEffect(() => {
     fetch('/api/auth/check').then(r => {
@@ -20,7 +23,6 @@ export default function Home() {
     })
   }, [])
 
-  // Fetch pending count on load and when switching to review tab
   useEffect(() => {
     if (!authenticated) return
     async function fetchCount() {
@@ -34,6 +36,19 @@ export default function Home() {
     }
     fetchCount()
   }, [authenticated, activeTab])
+
+  const handleResumeDraft = useCallback(async (sessionId: string) => {
+    try {
+      const res = await fetch(`/api/chat-sessions/${sessionId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setDraftSessionId(sessionId)
+        setDraftMessages(data.messages)
+        setChatKey(prev => prev + 1)
+        setActiveTab('chat')
+      }
+    } catch { /* ignore */ }
+  }, [])
 
   if (authenticated === null) {
     return (
@@ -88,9 +103,11 @@ export default function Home() {
 
       {/* Content */}
       <div className="flex-1 flex flex-col relative z-10">
-        {activeTab === 'chat' && <Chat />}
+        {activeTab === 'chat' && (
+          <Chat key={chatKey} sessionId={draftSessionId} initialMessages={draftMessages} />
+        )}
         {activeTab === 'review' && <ReviewPanel onCountChange={setPendingCount} />}
-        {activeTab === 'history' && <HistoryPanel />}
+        {activeTab === 'history' && <HistoryPanel onResumeDraft={handleResumeDraft} />}
       </div>
     </div>
   )

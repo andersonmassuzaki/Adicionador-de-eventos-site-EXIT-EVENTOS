@@ -69,15 +69,69 @@ function TypingDots() {
   )
 }
 
-export function Chat() {
-  const { messages, sendMessage, status } = useChat()
+export function Chat({ sessionId: initialSessionId, initialMessages }: { sessionId?: string; initialMessages?: { role: string; content: string }[] } = {}) {
+  const { messages, sendMessage, status, setMessages } = useChat()
   const [input, setInput] = useState('')
   const [showActions, setShowActions] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({ minHeight: 44, maxHeight: 160 })
+  const [inputFocused, setInputFocused] = useState(false)
+  const sessionIdRef = useRef<string | null>(initialSessionId || null)
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const isLoading = status === 'submitted' || status === 'streaming'
+
+  // Load initial messages from a draft session
+  useEffect(() => {
+    if (initialMessages && initialMessages.length > 0) {
+      // Set messages from saved session - use setMessages from useChat
+      setMessages(initialMessages.map((m, i) => ({
+        id: `restored-${i}`,
+        role: m.role as 'user' | 'assistant',
+        parts: [{ type: 'text' as const, text: m.content }],
+      })))
+      setShowActions(false)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-save session to Supabase (debounced)
+  useEffect(() => {
+    if (messages.length === 0) return
+
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
+    saveTimeoutRef.current = setTimeout(async () => {
+      const simplifiedMessages = messages.map(m => ({
+        role: m.role,
+        content: m.parts?.filter(p => p.type === 'text').map(p => 'text' in p ? p.text : '').join('') || '',
+      })).filter(m => m.content)
+
+      const firstUserMsg = simplifiedMessages.find(m => m.role === 'user')
+      const title = firstUserMsg?.content.slice(0, 60) || 'Nova conversa'
+
+      try {
+        if (!sessionIdRef.current) {
+          const res = await fetch('/api/chat-sessions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, messages: simplifiedMessages }),
+          })
+          if (res.ok) {
+            const data = await res.json()
+            sessionIdRef.current = data.id
+          }
+        } else {
+          await fetch(`/api/chat-sessions/${sessionIdRef.current}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, messages: simplifiedMessages }),
+          })
+        }
+      } catch { /* ignore save errors */ }
+    }, 2000)
+
+    return () => { if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current) }
+  }, [messages])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -300,7 +354,12 @@ export function Chat() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <div className="backdrop-blur-2xl bg-white/[0.02] rounded-2xl border border-white/[0.05] shadow-2xl overflow-hidden">
+        <div className={cn(
+          'backdrop-blur-2xl bg-white/[0.02] rounded-2xl border shadow-2xl overflow-hidden transition-all duration-300',
+          inputFocused
+            ? 'border-[#D0FC03]/20 shadow-[0_0_20px_rgba(208,252,3,0.08)]'
+            : 'border-white/[0.05]'
+        )}>
           <form onSubmit={handleSubmit}>
             <div className="p-3">
               <textarea
@@ -311,6 +370,8 @@ export function Chat() {
                   adjustHeight()
                 }}
                 onKeyDown={handleKeyDown}
+                onFocus={() => setInputFocused(true)}
+                onBlur={() => setInputFocused(false)}
                 placeholder="Digite uma mensagem..."
                 disabled={isLoading}
                 className={cn(
