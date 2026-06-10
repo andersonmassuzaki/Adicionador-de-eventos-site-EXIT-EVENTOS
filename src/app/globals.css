@@ -1,5 +1,50 @@
 @import "tailwindcss";
 
+/* --- Fonts --- */
+@font-face {
+  font-family: "Red Hat Display";
+  src: url("/fonts/RedHatDisplay-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Red Hat Display";
+  src: url("/fonts/RedHatDisplay-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Red Hat Display";
+  src: url("/fonts/RedHatDisplay-BlackItalic.woff2") format("woff2");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neue Einstellung";
+  src: url("/fonts/NeueEinstellung-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neue Einstellung";
+  src: url("/fonts/NeueEinstellung-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neue Einstellung";
+  src: url("/fonts/NeueEinstellung-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- Variables --- */
 :root {
   --background: #000000;
   --foreground: #FFF9ED;
@@ -8,6 +53,8 @@
   --ink-800: #1A1A1A;
   --ink-700: #2A2A2A;
   --red: #FF4B3E;
+  --font-display: "Red Hat Display", "Arial Black", system-ui, sans-serif;
+  --font-body: "Neue Einstellung", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 @theme inline {
@@ -18,17 +65,22 @@
   --color-ink-800: var(--ink-800);
   --color-ink-700: var(--ink-700);
   --color-red: var(--red);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--ink-800); }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--ink-700); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--lime); }

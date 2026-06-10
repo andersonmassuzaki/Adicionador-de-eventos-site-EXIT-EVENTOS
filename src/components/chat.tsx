@@ -185,9 +185,9 @@ export function Chat() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <div>
-          <h1 className="text-xl font-black tracking-tight text-[#FFF9ED]">EXIT</h1>
-          <p className="text-[10px] text-[#FFF9ED]/30 uppercase tracking-widest">Central de Eventos</p>
+        <div className="flex items-center gap-3">
+          <img src="/assets/logo-cream.png" alt="EXIT" className="h-6" />
+          <span className="text-[11px] text-[#FFF9ED]/25 uppercase tracking-widest font-light border-l border-[#FFF9ED]/10 pl-3">Central de Eventos</span>
         </div>
         <motion.button
           onClick={() => window.location.reload()}
@@ -214,7 +214,7 @@ export function Chat() {
             >
               <div className="text-center space-y-3">
                 <motion.h2
-                  className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#FFF9ED]/90 to-[#FFF9ED]/40"
+                  className="text-2xl font-bold tracking-tight text-[#FFF9ED]"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
@@ -222,7 +222,7 @@ export function Chat() {
                   O que você quer fazer?
                 </motion.h2>
                 <motion.p
-                  className="text-sm text-[#FFF9ED]/30"
+                  className="text-sm text-[#FFF9ED]/50"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
@@ -274,7 +274,7 @@ export function Chat() {
                 'max-w-[85%] text-sm leading-relaxed whitespace-pre-wrap',
                 m.role === 'user'
                   ? 'backdrop-blur-xl bg-white/[0.05] border border-white/[0.08] rounded-2xl rounded-br-sm px-4 py-3 text-[#FFF9ED]'
-                  : 'text-[#FFF9ED]/85 px-1 py-1'
+                  : 'text-[#FFF9ED]/95 px-1 py-1'
               )}
             >
               {m.parts?.map((part, i) => {
@@ -344,7 +344,7 @@ export function Chat() {
                 disabled={isLoading}
                 className={cn(
                   'w-full px-3 py-2 resize-none bg-transparent border-none text-[#FFF9ED]/90 text-sm',
-                  'focus:outline-none placeholder:text-[#FFF9ED]/15 disabled:opacity-50'
+                  'focus:outline-none placeholder:text-[#FFF9ED]/30 disabled:opacity-50'
                 )}
                 style={{ overflow: 'hidden' }}
               />

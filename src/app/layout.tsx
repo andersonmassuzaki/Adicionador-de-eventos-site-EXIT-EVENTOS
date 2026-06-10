@@ -1,11 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "EXIT · Central de Eventos",
@@ -18,7 +12,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${geistSans.variable} h-full antialiased`}>
+    <html lang="pt-BR" className="h-full">
+      <head>
+        <link rel="preload" as="font" href="/fonts/NeueEinstellung-Regular.woff2" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" as="font" href="/fonts/RedHatDisplay-Bold.woff2" type="font/woff2" crossOrigin="anonymous" />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

@@ -50,16 +50,16 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
         <div className="text-center mb-10">
-          <motion.h1
-            className="text-4xl font-black tracking-tight text-[#FFF9ED]"
+          <motion.div
+            className="flex justify-center"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            EXIT
-          </motion.h1>
+            <img src="/assets/logo-cream.png" alt="EXIT Eventos" className="h-8" />
+          </motion.div>
           <motion.p
-            className="text-sm text-[#FFF9ED]/30 mt-1"
+            className="text-[13px] text-[#FFF9ED]/30 mt-3 tracking-widest uppercase font-light"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
