@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       list_events: {
         description: 'Busca todos os eventos atuais do site EXIT. Use quando o usuário quer alterar um evento ou ver o que existe.',
         parameters: z.object({
-          query: z.string().optional().describe('Filtro opcional por nome do evento'),
+          query: z.string().describe('Filtro por nome do evento, ou "todos" para listar tudo'),
         }),
         execute: async () => {
           try {

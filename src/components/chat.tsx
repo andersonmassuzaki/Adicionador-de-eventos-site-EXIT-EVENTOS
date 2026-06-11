@@ -378,7 +378,7 @@ export function Chat({ sessionId: initialSessionId, initialMessages }: { session
                   'w-full px-3 py-2 resize-none bg-transparent border-none text-[#FFF9ED] text-sm font-normal',
                   'focus:outline-none placeholder:text-[#FFF9ED]/40 disabled:opacity-50'
                 )}
-                style={{ overflow: 'hidden' }}
+                style={{ overflowY: 'auto' }}
               />
             </div>
 
