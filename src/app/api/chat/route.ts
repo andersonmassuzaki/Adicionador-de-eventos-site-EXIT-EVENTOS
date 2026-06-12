@@ -1,4 +1,4 @@
-import { streamText, stepCountIs, convertToModelMessages } from 'ai'
+import { streamText, stepCountIs, convertToModelMessages, jsonSchema } from 'ai'
 import { z } from 'zod'
 import { model } from '@/lib/ai'
 import { SYSTEM_PROMPT } from '@/lib/system-prompt'
@@ -46,8 +46,12 @@ export async function POST(request: Request) {
     tools: {
       list_events: {
         description: 'Busca todos os eventos atuais do site EXIT. Use quando o usuário quer alterar um evento ou ver o que existe.',
-        parameters: z.object({
-          query: z.string().describe('Filtro por nome do evento, ou "todos" para listar tudo'),
+        parameters: jsonSchema({
+          type: 'object',
+          properties: {
+            query: { type: 'string', description: 'Filtro por nome do evento, ou "todos" para listar tudo' },
+          },
+          required: ['query'],
         }),
         execute: async () => {
           try {
