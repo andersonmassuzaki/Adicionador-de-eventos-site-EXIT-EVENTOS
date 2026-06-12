@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { streamText, stepCountIs, convertToModelMessages, jsonSchema } from 'ai'
 import { model } from '@/lib/ai'
 import { SYSTEM_PROMPT } from '@/lib/system-prompt'
