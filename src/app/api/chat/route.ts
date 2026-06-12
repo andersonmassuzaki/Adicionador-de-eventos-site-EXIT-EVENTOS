@@ -8,7 +8,7 @@ import { createPendingEvent } from '@/lib/supabase'
 export const maxDuration = 60
 
 const eventJsonSchema = {
-  type: 'object' as const,
+  type: 'object',
   properties: {
     name: { type: 'string', description: 'Nome do evento' },
     date: { type: 'string', description: 'Data formatada: "Sáb 22 Ago · 14h–22h"' },
@@ -31,7 +31,7 @@ const eventJsonSchema = {
     featuredTagline: { type: 'string', description: 'Tagline para destaque' },
   },
   required: ['name', 'date', 'day', 'month', 'weekday', 'sortDate', 'city', 'tags', 'moods', 'campaign', 'link'],
-}
+} as const
 
 export async function POST(request: Request) {
   const authed = await isAuthenticated()
