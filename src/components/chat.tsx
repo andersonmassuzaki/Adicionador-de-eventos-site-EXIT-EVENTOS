@@ -10,6 +10,8 @@ import {
   Paperclip,
   CalendarPlus,
   Pencil,
+  XIcon,
+  ImageIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { EventPreview } from './event-preview'
@@ -73,6 +75,7 @@ export function Chat({ sessionId: initialSessionId, initialMessages }: { session
   const { messages, sendMessage, status, setMessages } = useChat()
   const [input, setInput] = useState('')
   const [showActions, setShowActions] = useState(true)
+  const [pendingFile, setPendingFile] = useState<{ name: string; base64: string; ext: string } | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({ minHeight: 44, maxHeight: 160 })
@@ -144,9 +147,20 @@ export function Chat({ sessionId: initialSessionId, initialMessages }: { session
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!input.trim() || isLoading) return
+    if ((!input.trim() && !pendingFile) || isLoading) return
     setShowActions(false)
-    sendMessage({ text: input })
+
+    let text = input.trim()
+
+    // Append flyer data if there's a pending file
+    if (pendingFile) {
+      const flyerLine = `[Flyer anexado: ${pendingFile.name}]`
+      const flyerData = `\n\nDados do arquivo para uso interno:\nflyerBase64: ${pendingFile.base64}\nflyerExtension: ${pendingFile.ext}`
+      text = text ? `${text}\n\n${flyerLine}${flyerData}` : `${flyerLine}${flyerData}`
+      setPendingFile(null)
+    }
+
+    sendMessage({ text })
     setInput('')
     adjustHeight(true)
   }
@@ -154,7 +168,7 @@ export function Chat({ sessionId: initialSessionId, initialMessages }: { session
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      if (input.trim() && !isLoading) {
+      if ((input.trim() || pendingFile) && !isLoading) {
         handleSubmit(e)
       }
     }
@@ -167,9 +181,7 @@ export function Chat({ sessionId: initialSessionId, initialMessages }: { session
     reader.onload = () => {
       const base64 = (reader.result as string).split(',')[1]
       const ext = file.name.split('.').pop() || 'png'
-      sendMessage({
-        text: `[Flyer enviado: ${file.name}]\n\nDados do arquivo para uso interno:\nflyerBase64: ${base64}\nflyerExtension: ${ext}`,
-      })
+      setPendingFile({ name: file.name, base64, ext })
     }
     reader.readAsDataURL(file)
     e.target.value = ''
@@ -382,6 +394,30 @@ export function Chat({ sessionId: initialSessionId, initialMessages }: { session
               />
             </div>
 
+            {/* Pending file attachment */}
+            <AnimatePresence>
+              {pendingFile && (
+                <motion.div
+                  className="px-3 pb-2"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                >
+                  <div className="flex items-center gap-2 px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg">
+                    <ImageIcon className="w-4 h-4 text-[#D0FC03]/60 shrink-0" />
+                    <span className="text-xs text-[#FFF9ED]/60 truncate flex-1">{pendingFile.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => setPendingFile(null)}
+                      className="text-[#FFF9ED]/30 hover:text-[#FF4B3E] transition-colors cursor-pointer shrink-0"
+                    >
+                      <XIcon className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div className="px-3 pb-3 flex items-center justify-between">
               <div className="flex items-center gap-1">
                 <input
@@ -418,12 +454,12 @@ export function Chat({ sessionId: initialSessionId, initialMessages }: { session
 
               <motion.button
                 type="submit"
-                disabled={isLoading || !input.trim()}
+                disabled={isLoading || (!input.trim() && !pendingFile)}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className={cn(
                   'px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 cursor-pointer',
-                  input.trim()
+                  (input.trim() || pendingFile)
                     ? 'bg-[#D0FC03] text-black shadow-lg shadow-[#D0FC03]/10'
                     : 'bg-white/[0.05] text-[#FFF9ED]/35'
                 )}
