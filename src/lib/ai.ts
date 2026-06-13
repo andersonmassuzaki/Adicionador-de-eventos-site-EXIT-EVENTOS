@@ -5,4 +5,4 @@ export const openrouter = createOpenAI({
   apiKey: process.env.OPENROUTER_API_KEY!,
 })
 
-export const model = openrouter.chat('openai/gpt-4o-mini')
+export const model = openrouter.chat('anthropic/claude-haiku-4.5')

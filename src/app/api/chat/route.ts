@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { streamText, stepCountIs, convertToModelMessages, jsonSchema } from 'ai'
+import { streamText, stepCountIs, convertToModelMessages } from 'ai'
+import { z } from 'zod/v3'
 import { model } from '@/lib/ai'
 import { SYSTEM_PROMPT } from '@/lib/system-prompt'
 import { isAuthenticated } from '@/lib/auth'
@@ -8,31 +9,27 @@ import { createPendingEvent } from '@/lib/supabase'
 
 export const maxDuration = 60
 
-const eventJsonSchema = {
-  type: 'object',
-  properties: {
-    name: { type: 'string', description: 'Nome do evento' },
-    date: { type: 'string', description: 'Data formatada: "Sáb 22 Ago · 14h–22h"' },
-    day: { type: 'string', description: 'Dia do mês: "22"' },
-    month: { type: 'string', description: 'Mês abreviado: "AGO"' },
-    weekday: { type: 'string', description: 'Dia da semana: "SÁB"' },
-    sortDate: { type: 'string', description: 'Data ISO: "2026-08-22"' },
-    location: { type: 'string', description: 'Local do evento (opcional)' },
-    city: { type: 'string', description: 'Cidade' },
-    tags: { type: 'array', items: { type: 'string' }, description: 'Tags de gênero' },
-    moods: { type: 'array', items: { type: 'string' }, description: 'Moods para filtro' },
-    artists: { type: 'array', items: { type: 'string' }, description: 'Artistas' },
-    seal: { type: 'string', description: '"desconto" ou "pre-venda"' },
-    campaign: { type: 'string', description: 'Campanha' },
-    link: { type: 'string', description: 'URL de compra ou "a definir"' },
-    isWhatsApp: { type: 'boolean', description: 'true se link é WhatsApp' },
-    parentEventId: { type: 'number', description: 'ID do evento pai' },
-    description: { type: 'string', description: 'Descrição longa' },
-    featured: { type: 'boolean', description: 'Evento destacado' },
-    featuredTagline: { type: 'string', description: 'Tagline para destaque' },
-  },
-  required: ['name', 'date', 'day', 'month', 'weekday', 'sortDate', 'city', 'tags', 'moods', 'campaign', 'link'],
-} as const
+const eventFields = {
+  name: z.string().describe('Nome do evento'),
+  date: z.string().describe('Data formatada: Sáb 22 Ago · 14h–22h'),
+  day: z.string().describe('Dia do mês'),
+  month: z.string().describe('Mês abreviado maiúsculo'),
+  weekday: z.string().describe('Dia da semana abreviado'),
+  sortDate: z.string().describe('Data ISO: 2026-08-22'),
+  location: z.string().optional().describe('Local do evento'),
+  city: z.string().describe('Cidade'),
+  tags: z.array(z.string()).describe('Tags de gênero'),
+  moods: z.array(z.string()).describe('Moods para filtro'),
+  artists: z.array(z.string()).optional().describe('Artistas'),
+  seal: z.string().optional().describe('desconto ou pre-venda'),
+  campaign: z.string().describe('Campanha'),
+  link: z.string().describe('URL de compra ou a definir'),
+  isWhatsApp: z.boolean().optional().describe('true se link é WhatsApp'),
+  parentEventId: z.number().optional().describe('ID do evento pai'),
+  description: z.string().optional().describe('Descrição longa'),
+  featured: z.boolean().optional().describe('Evento destacado'),
+  featuredTagline: z.string().optional().describe('Tagline para destaque'),
+}
 
 export async function POST(request: Request) {
   const authed = await isAuthenticated()
@@ -46,16 +43,11 @@ export async function POST(request: Request) {
     model,
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tools: {
       list_events: {
         description: 'Busca todos os eventos atuais do site EXIT.',
-        parameters: jsonSchema({
-          type: 'object',
-          properties: {
-            query: { type: 'string', description: 'Filtro por nome ou "todos"' },
-          },
-          required: ['query'],
+        parameters: z.object({
+          query: z.string().describe('Filtro por nome ou todos'),
         }),
         execute: async () => {
           try {
@@ -77,10 +69,10 @@ export async function POST(request: Request) {
 
       preview_event: {
         description: 'Mostra preview do evento. Chame quando tiver nome, data, cidade e gênero.',
-        parameters: jsonSchema(eventJsonSchema),
+        parameters: z.object(eventFields),
         execute: async (params: Record<string, unknown>) => {
           return {
-            status: 'preview',
+            status: 'preview' as const,
             message: 'Preview montado.',
             event: params,
           }
@@ -88,14 +80,11 @@ export async function POST(request: Request) {
       },
 
       create_event: {
-        description: 'Salva evento para revisão. Chame após preview ou quando o usuário confirmar.',
-        parameters: jsonSchema({
-          ...eventJsonSchema,
-          properties: {
-            ...eventJsonSchema.properties,
-            flyerBase64: { type: 'string', description: 'Flyer em base64' },
-            flyerExtension: { type: 'string', description: 'Extensão: webp, jpg, png' },
-          },
+        description: 'Salva evento para revisão. Chame após preview ou confirmação.',
+        parameters: z.object({
+          ...eventFields,
+          flyerBase64: z.string().optional().describe('Flyer em base64'),
+          flyerExtension: z.string().optional().describe('Extensão: webp, jpg, png'),
         }),
         execute: async (params: Record<string, unknown>) => {
           const { flyerBase64, flyerExtension, ...eventData } = params
@@ -105,7 +94,7 @@ export async function POST(request: Request) {
             flyerExtension as string | undefined,
           )
           return {
-            status: res.success ? 'pending' : 'error',
+            status: res.success ? 'pending' as const : 'error' as const,
             message: res.success
               ? `Evento "${params.name}" salvo para revisão!`
               : (res.error ?? 'Erro desconhecido'),
@@ -116,19 +105,15 @@ export async function POST(request: Request) {
 
       update_event: {
         description: 'Altera evento existente no site.',
-        parameters: jsonSchema({
-          type: 'object',
-          properties: {
-            eventId: { type: 'number', description: 'ID do evento' },
-            changes: { type: 'object', description: 'Campos a alterar', additionalProperties: { type: 'string' } },
-          },
-          required: ['eventId', 'changes'],
+        parameters: z.object({
+          eventId: z.number().describe('ID do evento'),
+          changes: z.record(z.string()).describe('Campos a alterar'),
         }),
         execute: async (params: Record<string, unknown>) => {
           const { eventId, changes } = params as { eventId: number; changes: Record<string, string> }
           const res = await updateEvent(eventId, changes)
           return {
-            status: res.success ? 'updated' : 'error',
+            status: res.success ? 'updated' as const : 'error' as const,
             message: res.success
               ? `Evento #${eventId} atualizado!`
               : (res.error ?? 'Erro desconhecido'),
@@ -136,8 +121,7 @@ export async function POST(request: Request) {
           }
         },
       },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any,
+    },
     stopWhen: stepCountIs(5),
   })
 
